@@ -20,7 +20,8 @@ jobs:
     
     - name: Copy files to EC2
       run: |
-          sudo su
+          mkdir Manuel_final
+          sudo chmod -R 777 /home/ec2-user/Manuel_final/
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final/
 
 
