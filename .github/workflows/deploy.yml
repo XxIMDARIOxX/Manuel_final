@@ -10,34 +10,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # Paso 1: Hacer checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.4
-      with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+      # Paso 2: Configurar la clave SSH para acceder al servidor EC2
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
-    - name: Copy files to EC2
-      run: |
+      # Paso 3: Asegurarse de que `ec2-user` tenga los permisos correctos en el directorio
+      - name: Fix permissions on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            # Cambiar propietario del directorio y sus archivos
+            sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
+            # Asignar permisos para lectura, escritura y ejecución al propietario
+            sudo chmod -R 755 /home/ec2-user/Manuel_final/
+          EOF
+
+      # Paso 4: Sincronizar los archivos con rsync
+      - name: Sync files with rsync
+        run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final/
 
 
-    - name: Deploy with Docker Compose
-      run: |
-        ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-        sudo chmod -R 777 /home/ec2-user/Manuel_final/
-        sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
-        cd /home/ec2-user/Manuel_final
-        docker-compose down
-        docker-compose up -d --build --force-recreate
-        EOF 
-    
-    - name: Clean up on failure
-      if: failure()
-      run: |
-        echo "Deployment failed, cleaning up..."
-        ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'sudo rm -rf /home/ec2-user/Manuel_final' 
+      - name: Deploy with Docker Compose
+        run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+          sudo chmod -R 777 /home/ec2-user/Manuel_final/
+          sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
+          cd /home/ec2-user/Manuel_final
+          docker-compose down
+          docker-compose up -d --build --force-recreate
+          EOF 
+      
+      - name: Clean up on failure
+        if: failure()
+        run: |
+          echo "Deployment failed, cleaning up..."
+          ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'sudo rm -rf /home/ec2-user/Manuel_final' 
       
 
         
