@@ -21,7 +21,11 @@ jobs:
 
     - name: Create directory
       run: |
-        ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'mkdir Manuel_final | sudo chmod -R 777 /home/ec2-user/Manuel_final/'
+        ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'mkdir Manuel_final'
+        ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+        sudo chmod -R 777 /home/ec2-user/Manuel_final/
+        sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
+        EOF
 
 
     - name: Copy files to EC2
