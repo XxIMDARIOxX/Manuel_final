@@ -24,6 +24,7 @@ jobs:
       - name: Fix permissions on EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            mkdir Manuel_final
             # Cambiar propietario del directorio y sus archivos
             sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
             # Asignar permisos para lectura, escritura y ejecución al propietario
