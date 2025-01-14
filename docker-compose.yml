@@ -47,7 +47,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - /home/ec2-user/Manuel_final/prometheus.yml:/etc/prometheus/prometheus.yml
     command: 
       - "--config.file=/etc/prometheus/prometheus.yml"
 
@@ -94,9 +94,9 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:8.10.2
     volumes:
-      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-      - ./nginx_logs:/nginx_logs
-      - ./mariadb_logs:/mariadb_logs
+      - /home/ec2-user/Manuel_final/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+      - /home/ec2-user/Manuel_final/nginx_logs:/nginx_logs
+      - /home/ec2-user/Manuel_final/mariadb_logs:/mariadb_logs
     ports:
       - "5044:5044"
     depends_on:
