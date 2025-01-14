@@ -20,6 +20,7 @@ jobs:
     
     - name: Copy files to EC2
       run: |
+          sudo su
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final/
 
 
