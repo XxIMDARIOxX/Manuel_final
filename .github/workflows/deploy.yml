@@ -19,6 +19,11 @@ jobs:
         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
 
 
+    - name: Create directory
+      run: |
+        ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'mkdir Manuel_final | sudo chmod -R 777 /home/ec2-user/Manuel_final/'
+
+
     - name: Copy files to EC2
       run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final/
