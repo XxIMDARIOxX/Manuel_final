@@ -47,10 +47,10 @@ jobs:
             cd /home/ec2-user/Manuel_final
             
             # Detener contenedores existentes y recrear
-            docker-compose down
+            docker-compose down -v
             
             # Asegurarse de que el contenedor se construya de nuevo y se ejecute en segundo plano
-            docker-compose up -d --build --force-recreate
+            docker-compose up -d --build
           EOF
 
       # Paso 6: Limpiar en caso de fallo
