@@ -17,7 +17,7 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.4
       with:
         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-        
+
 
     - name: Copy files to EC2
       run: |
@@ -32,6 +32,12 @@ jobs:
         docker-compose down
         docker-compose up -d --build --force-recreate
         EOF 
+    
+    - name: Clean up on failure
+      if: failure()
+      run: |
+        echo "Deployment failed, cleaning up..."
+        ssh -i StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} 'sudo rm -rf /home/ec2-user/Manuel_final'
       
 
         
