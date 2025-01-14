@@ -1,0 +1,4 @@
+pytest==7.4.0         # Para ejecutar pruebas automatizadas
+requests==2.31.0      # Para realizar peticiones HTTP
+mysql-connector==2.2.9  # Para interactuar con la base de datos MariaDB
+flask==2.3.3          # Si usas Flask para pruebas o utilidades
