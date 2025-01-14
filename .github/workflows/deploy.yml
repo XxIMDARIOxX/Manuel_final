@@ -35,22 +35,31 @@ jobs:
         run: |
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final/
 
-
+      # Paso 5: Desplegar con Docker Compose
       - name: Deploy with Docker Compose
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-          sudo chmod -R 777 /home/ec2-user/Manuel_final/
-          sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
-          cd /home/ec2-user/Manuel_final
-          docker-compose down
-          docker-compose up -d --build --force-recreate
-          EOF 
-      
+            # Asegurarse de que los permisos sean correctos
+            sudo chmod -R 777 /home/ec2-user/Manuel_final/
+            sudo chown -R ec2-user:ec2-user /home/ec2-user/Manuel_final/
+            
+            # Navegar al directorio del proyecto
+            cd /home/ec2-user/Manuel_final
+            
+            # Detener contenedores existentes y recrear
+            docker-compose down
+            
+            # Asegurarse de que el contenedor se construya de nuevo y se ejecute en segundo plano
+            docker-compose up -d --build --force-recreate
+          EOF
+
+      # Paso 6: Limpiar en caso de fallo
       - name: Clean up on failure
         if: failure()
         run: |
           echo "Deployment failed, cleaning up..."
-          ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'sudo rm -rf /home/ec2-user/Manuel_final' 
-      
-
-        
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+            # Eliminar el directorio si el despliegue falla
+            docker-compose down -v
+            sudo rm -rf /home/ec2-user/Manuel_final
+          EOF
