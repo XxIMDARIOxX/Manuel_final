@@ -37,7 +37,7 @@ jobs:
       if: failure()
       run: |
         echo "Deployment failed, cleaning up..."
-        ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'sudo rm -rf /home/ec2-user/Manuel_final'
+        ssh -i ./ ec2-user@${{ secrets.EC2_HOST }} 'sudo rm -rf /home/ec2-user/Manuel_final' 
       
 
         
