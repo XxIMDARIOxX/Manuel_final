@@ -17,17 +17,24 @@ jobs:
       uses: webfactory/ssh-agent@v0.5.4
       with:
         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
-    
+
+    - name: Create directory
+      run: |
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+          sudo rm -rf Manuel_final
+          mkdir Manuel_final
+          EOF 
+
+
     - name: Copy files to EC2
       run: |
-          mkdir Manuel_final
-          sudo chmod -R 777 /home/ec2-user/Manuel_final/
           rsync -avz -e "ssh -o StrictHostKeyChecking=no" ./ ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final/
 
 
     - name: Deploy with Docker Compose
       run: |
         ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+        sudo chmod -R 777 /home/ec2-user/Manuel_final/
         cd /home/ec2-user/Manuel_final
         docker-compose down
         docker-compose up -d --build --force-recreate
