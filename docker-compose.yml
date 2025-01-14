@@ -47,7 +47,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - /home/ec2-user/Manuel_final/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     command: 
       - "--config.file=/etc/prometheus/prometheus.yml"
 
