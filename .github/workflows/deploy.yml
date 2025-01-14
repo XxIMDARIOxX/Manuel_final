@@ -19,7 +19,10 @@ jobs:
         ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
     
     - name: Copy files to EC2
-      run: scp -r -o StrictHostKeyChecking=no . ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final
+      run: |
+        find . -type f -print | while read file; do
+        scp -r -o StrictHostKeyChecking=no "$file" ec2-user@${{ secrets.EC2_HOST }}:/home/ec2-user/Manuel_final;
+        done
 
 
     - name: Deploy with Docker Compose
@@ -30,3 +33,4 @@ jobs:
         docker-compose up -d --build
         EOF
 
+        
