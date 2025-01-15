@@ -123,4 +123,4 @@ volumes:
 
 networks:
   elastic-network:
-    driver: bridge
+    driver: bridge 
