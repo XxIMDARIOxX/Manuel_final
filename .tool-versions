@@ -1,4 +1,2 @@
-nodejs 14.21.3
-docker 27.5.0
-mariadb 10.5
-nginx 1.25.2
+terraform 1.10.4
+docker-compose 1.29.2
